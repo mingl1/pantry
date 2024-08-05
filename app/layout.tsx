@@ -14,7 +14,7 @@ const baseFont = Inter({
 });
 export const metadata: Metadata = {
   title: "CRUDsty Pantry",
-  description: "A CRUD app, for your pantry",
+  description: "A CRUD app, for your digital pantry",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${baseFont.variable} ${displayFont.variable} scroll-smooth`}
+        className={`${baseFont.variable} ${displayFont.variable} scroll-smooth bg-transparent`}
       >
         {children}
       </body>

@@ -24,36 +24,28 @@ export default function Component() {
 
   return (
     <LandingPrimaryVideoCtaSection
-      title="Time to level up ↑ your front-end skills"
-      description="Elevate your development game and achieve more with our awesome front-end learning center. It's dynamic, beginner-friendly, and designed with you in mind!"
-      autoPlay
+      title="Time to organize those browser bookmarks🔖"
+      description="Find whats important, with ease."
+      autoPlay={false}
       controls={false}
       videoPosition="center"
-      // videoSrc="https://cache.shipixen.com/features/11-pricing-page-builder.mp4"
+      videoSrc="https://cache.shipixen.com/features/11-pricing-page-builder.mp4"
       withBackground
       variant="secondary"
-      leadingComponent={<LandingProductHuntAward />}
+      // leadingComponent={<LandingProductHuntAward />}
     >
       <Button size="xl" variant="secondary" asChild>
-        <a href="#">Get started</a>
+        <a href="/signup">Get started</a>
       </Button>
 
       <Button size="xl" variant="outlineSecondary">
-        <a href="#">Learn More</a>
+        <a href="/details">Learn More</a>
       </Button>
 
-      <LandingDiscount
+      {/* <LandingDiscount
         discountValueText="$50 off"
         discountDescriptionText="for the first 20 customers (5 left)"
-      />
-
-      <LandingSocialProof
-        className="w-full mt-12"
-        showRating
-        numberOfUsers={12000}
-        suffixText="happy users"
-        avatarItems={avatarItems}
-      />
+      /> */}
     </LandingPrimaryVideoCtaSection>
   );
 }

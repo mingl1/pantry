@@ -145,3 +145,38 @@
     @apply xl:max-w-7xl;
   }
 }
+
+.CollapsibleContent {
+  overflow: hidden;
+}
+.CollapsibleContent[data-state="open"] {
+  animation: slideDown 300ms ease-out;
+}
+.CollapsibleContent[data-state="closed"] {
+  animation: slideUp 300ms ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+.AccordionChevron {
+  transition: transform 300ms;
+  rotate: -90deg;
+}
+.AccordionTrigger[data-state="open"] > .AccordionChevron {
+  transform: rotate(90deg);
+}
