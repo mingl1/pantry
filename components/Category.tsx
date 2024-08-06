@@ -14,13 +14,11 @@ const Category: FC<CategoryProps> = ({ category, favorites }) => {
     <ScrollArea className="h-72 w-48 rounded-md border bg-secondary-600">
       <div className="p-4">
         <h4 className="mb-4 text-sm font-medium leading-none">{category}</h4>
-        {favorites.map((favorite) => (
-          <>
-            <div key={favorite} className="text-sm">
-              {favorite}
-            </div>
+        {favorites.map((favorite, ind) => (
+          <div key={favorite + ind}>
+            <div className="text-sm">{favorite}</div>
             <Separator className="my-2" />
-          </>
+          </div>
         ))}
       </div>
     </ScrollArea>

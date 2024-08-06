@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import Draggable from "react-draggable";
 import { FileInput, FileUploader } from "@/components/Upload";
 import { useEffect, useState } from "react";
@@ -45,7 +44,17 @@ export default function Dashboard() {
   useEffect(() => {
     async function asyncWork() {
       if (files && files[0]) {
-        const mime = await fileTypeFromBlob(files[0]);
+        if (files[0].type == "text/html") {
+          const favorites = await parseFile(files[0]);
+          const response = await fetch("/api", {
+            method: "POST",
+            body: JSON.stringify(favorites.slice(0, 10)),
+          })
+            .then((res) => res.json())
+            .catch((res) => res);
+          console.log(response);
+        } else {
+        }
       }
     }
     asyncWork();
@@ -128,4 +137,14 @@ export default function Dashboard() {
       </Draggable>
     </main>
   );
+}
+async function parseFile(file: File): Promise<Array<string>> {
+  const arr: Array<string> = [];
+  const pattern = /<a\s+href="([^"]*)"/gi;
+  console.log(await file.text());
+  const urls = await file
+    .text()
+    .then((text) => text.matchAll(pattern).toArray());
+  const res = urls.map((e) => e[1]);
+  return res;
 }
