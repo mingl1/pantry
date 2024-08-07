@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Syne } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
+<Toaster />;
 const displayFont = Syne({
   subsets: ["latin"],
   display: "swap",
@@ -16,6 +18,7 @@ export const metadata: Metadata = {
   title: "CRUDsty Pantry",
   description: "A CRUD app, for your digital pantry",
 };
+import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   children,

@@ -1,4 +1,4 @@
-type ApiResponse =
+export type ApiResponse =
   | {
       usage: {
         text_units: number;
@@ -10,6 +10,9 @@ type ApiResponse =
       categories: Array<{
         score: number;
         label: string;
+        explanation?: {
+          relevant_text: string[];
+        };
       }>;
     }
   | { error: string; code: number };
@@ -19,8 +22,7 @@ export async function POST(request: Request) {
   myHeaders.append("Content-Type", "application/json");
   myHeaders.append("Authorization", process.env.apiKey!);
   const body = await request.json();
-  const resultArray: ApiResponse[] = [];
-  const failed: string[] = [];
+  const resultArray: Array<ApiResponse | null> = [];
   if (body) {
     const urlArray = body as Array<string>;
     const requestOptions = {
@@ -35,7 +37,10 @@ export async function POST(request: Request) {
         url: url,
         features: {
           categories: {
-            limit: 3,
+            limit: 1,
+            model: process.env.model,
+            explanation: true,
+            limit_text_characters: 9000,
           },
         },
       });
@@ -46,20 +51,19 @@ export async function POST(request: Request) {
       )
         .then((response) => response.json())
         .then((result: ApiResponse) => {
-          console.log(result);
           if (isSuccessResponse(result)) resultArray.push(result);
-          else failed.push(url);
+          else resultArray.push(null);
         })
         .catch((error) => {
           console.error(error);
-          failed.push(url);
+          resultArray.push(null);
         });
     }
   }
 
-  return Response.json({ resultArray, failed });
+  return Response.json({ resultArray });
 }
-function isSuccessResponse(
+export function isSuccessResponse(
   response: ApiResponse
 ): response is Exclude<ApiResponse, { error: string; code: number }> {
   return (response as { usage: any }).usage !== undefined;

@@ -25,7 +25,7 @@ export default function Component() {
   return (
     <LandingPrimaryVideoCtaSection
       title="Time to organize those browser bookmarks🔖"
-      description="Find whats important, with ease."
+      description="Find whats important, with SupaMark."
       autoPlay={false}
       controls={false}
       videoPosition="center"
@@ -35,7 +35,7 @@ export default function Component() {
       // leadingComponent={<LandingProductHuntAward />}
     >
       <Button size="xl" variant="secondary" asChild>
-        <a href="/signup">Get started</a>
+        <a href="/register">Get started</a>
       </Button>
 
       <Button size="xl" variant="outlineSecondary">

@@ -14,7 +14,7 @@ import Draggable from "react-draggable";
 import { FileInput, FileUploader } from "@/components/Upload";
 import { useEffect, useState } from "react";
 import { DropzoneOptions } from "react-dropzone";
-
+import { isSuccessResponse, type ApiResponse } from "../api/route";
 import {
   Accordion,
   AccordionContent,
@@ -46,12 +46,33 @@ export default function Dashboard() {
       if (files && files[0]) {
         if (files[0].type == "text/html") {
           const favorites = await parseFile(files[0]);
+          const req = favorites.map((e) => e.href);
           const response = await fetch("/api", {
             method: "POST",
-            body: JSON.stringify(favorites.slice(0, 10)),
+            body: JSON.stringify(req.slice(0, 5)),
           })
             .then((res) => res.json())
             .catch((res) => res);
+          const dict: {
+            [label: string]: { url: string; icon: string | null }[];
+          } = {};
+          for (let i = 0; i < favorites.length; i++) {
+            const res = response.resultArray[i] as ApiResponse;
+            if (isSuccessResponse(res)) {
+              const url = res.retrieved_url;
+              if (dict[res.categories[0].label])
+                dict[res.categories[0].label].push({
+                  url: url,
+                  icon: favorites[i].icon,
+                });
+              else {
+                dict[res.categories[0].label] = [
+                  { url: url, icon: favorites[i].icon },
+                ];
+              }
+            }
+          }
+          console.log(dict);
           console.log(response);
         } else {
         }
@@ -60,21 +81,16 @@ export default function Dashboard() {
     asyncWork();
   }, [files]);
   return (
-    <main className="bg-secondary-900 h-screen w-full flex items-center">
-      <Draggable defaultClassName="cursor-move">
-        <Accordion
-          type="single"
-          className="mx-auto"
-          collapsible
-          defaultValue="upload"
-        >
+    <main
+      className="bg-secondary-900 h-screen w-screen flex items-center justify-center m-0 p-0"
+      id="bound"
+    >
+      <Draggable defaultClassName="cursor-move" bounds="parent">
+        <Accordion type="single" collapsible defaultValue="upload">
           <AccordionItem value="upload" className="border-b-0">
             <Card className="max-w-lg bg-secondary-200 border-0 drop-shadow-lg">
               <CardHeader>
-                <AccordionTrigger
-                  // onClick={() => setOpened((e) => !e)}
-                  className="AccordionTrigger flex"
-                >
+                <AccordionTrigger className="AccordionTrigger flex">
                   <ChevronDownIcon className="AccordionChevron" aria-hidden />
                   <CardTitle className="text-xl text-left w-full ml-2">
                     Try it
@@ -117,7 +133,7 @@ export default function Dashboard() {
           </AccordionItem>
         </Accordion>
       </Draggable>
-      <Draggable defaultClassName="cursor-move">
+      <Draggable defaultClassName="cursor-move" bounds="parent">
         <div className="p-4">
           <Category
             category="Anime"
@@ -138,13 +154,19 @@ export default function Dashboard() {
     </main>
   );
 }
-async function parseFile(file: File): Promise<Array<string>> {
+async function parseFile(
+  file: File
+): Promise<Array<{ href: string; icon: string | null }>> {
   const arr: Array<string> = [];
-  const pattern = /<a\s+href="([^"]*)"/gi;
+  // captures href and icon(optional) value between anchor tags
+  const pattern = /<a\s+[^>]*href="([^"]*)"(?:[^>]*icon="([^"]*)")?[^>]*/gi;
   console.log(await file.text());
   const urls = await file
     .text()
     .then((text) => text.matchAll(pattern).toArray());
-  const res = urls.map((e) => e[1]);
+  const res = urls.map((e) => ({
+    href: e[1],
+    icon: e[2] || null,
+  }));
   return res;
 }
