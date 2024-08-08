@@ -18,7 +18,6 @@ export const metadata: Metadata = {
   title: "CRUDsty Pantry",
   description: "A CRUD app, for your digital pantry",
 };
-import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   children,

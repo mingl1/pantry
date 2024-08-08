@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { fileTypeFromBlob } from "file-type";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,7 +12,6 @@ import Draggable from "react-draggable";
 import { FileInput, FileUploader } from "@/components/Upload";
 import { useEffect, useState } from "react";
 import { DropzoneOptions } from "react-dropzone";
-import { isSuccessResponse, type ApiResponse } from "../api/route";
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +20,17 @@ import {
 } from "@/components/shared/ui/accordion";
 import { ChevronDownIcon } from "lucide-react";
 import Category from "@/components/Category";
+import QueryClientProvider from "@/components/query-provider";
+import UserProfile from "@/components/supaauth/user-profile";
+import MyBentoGrid from "@/components/BentoGrid";
+export type CategoryType = {
+  [label: string]: CategoryItem;
+};
+export type CategoryItem = {
+  url: string;
+  icon?: string | null;
+  name?: string | null;
+}[];
 export const description =
   "A sign up form with first name, last name, email and password inside a card. There's an option to sign up with GitHub and a link to login if you already have an account";
 
@@ -32,6 +40,7 @@ export const containerClassName =
   "w-full h-screen flex items-center justify-center px-4";
 
 export default function Dashboard() {
+  const [bookmarks, setBookmarks] = useState<CategoryType>();
   const dropZoneConfig = {
     accept: {
       "text/html": [".html"],
@@ -45,34 +54,30 @@ export default function Dashboard() {
     async function asyncWork() {
       if (files && files[0]) {
         if (files[0].type == "text/html") {
-          const favorites = await parseFile(files[0]);
-          const req = favorites.map((e) => e.href);
-          const response = await fetch("/api", {
-            method: "POST",
-            body: JSON.stringify(req.slice(0, 5)),
-          })
-            .then((res) => res.json())
-            .catch((res) => res);
-          const dict: {
-            [label: string]: { url: string; icon: string | null }[];
-          } = {};
-          for (let i = 0; i < favorites.length; i++) {
-            const res = response.resultArray[i] as ApiResponse;
-            if (isSuccessResponse(res)) {
-              const url = res.retrieved_url;
-              if (dict[res.categories[0].label])
-                dict[res.categories[0].label].push({
-                  url: url,
-                  icon: favorites[i].icon,
-                });
-              else {
-                dict[res.categories[0].label] = [
-                  { url: url, icon: favorites[i].icon },
-                ];
-              }
+          let favorites = await parseFile(files[0]);
+          favorites = favorites.map((e) => {
+            return { name: e.name, url: e.url };
+          });
+          let response: CategoryType = {};
+          for (let i = 0; i < 10; i += 5) {
+            if (i > 10) {
+              break;
             }
+            const chunk = favorites.splice(i, i + 5);
+            console.log(chunk);
+            let chunkResponse = await fetch("/auth/bookmarks", {
+              method: "POST",
+              body: JSON.stringify(chunk),
+            })
+              .then((res) => res.json())
+              .catch((res) => res);
+            if (chunkResponse.error) {
+              return;
+            }
+            response = { ...response, ...chunkResponse };
           }
-          console.log(dict);
+
+          setBookmarks(makeDict(response));
           console.log(response);
         } else {
         }
@@ -80,93 +85,114 @@ export default function Dashboard() {
     }
     asyncWork();
   }, [files]);
+  useEffect(() => {
+    async function getBookMarks() {
+      const response = await fetch("/auth/bookmarks?next=bookmarks", {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((res) => makeDict(res));
+      setBookmarks(response);
+    }
+    getBookMarks();
+  }, []);
+  if (bookmarks) console.log(Object.keys(bookmarks));
   return (
-    <main
-      className="bg-secondary-900 h-screen w-screen flex items-center justify-center m-0 p-0"
-      id="bound"
-    >
-      <Draggable defaultClassName="cursor-move" bounds="parent">
-        <Accordion type="single" collapsible defaultValue="upload">
-          <AccordionItem value="upload" className="border-b-0">
-            <Card className="max-w-lg bg-secondary-200 border-0 drop-shadow-lg">
-              <CardHeader>
-                <AccordionTrigger className="AccordionTrigger flex">
-                  <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                  <CardTitle className="text-xl text-left w-full ml-2">
-                    Try it
-                  </CardTitle>
-                </AccordionTrigger>
-                <CardDescription className="text-slate-700">
-                  Export your bookmarks and drop it here
-                </CardDescription>
-              </CardHeader>
-              <AccordionContent className="CollapsibleContent">
-                <CardContent>
-                  <div className="grid gap-4">
-                    <FileUploader
-                      value={files}
-                      onValueChange={setFiles}
-                      dropzoneOptions={dropZoneConfig}
-                    >
-                      <FileInput>
-                        <div className="flex items-center justify-center h-32 w-full border bg-background rounded-md">
-                          <p className="text-gray-400">Drop file here</p>
-                        </div>
-                      </FileInput>
-                    </FileUploader>
-                    <Button
-                      type="submit"
-                      className="w-full bg-secondary-700 text-white"
-                    >
-                      Organize it
-                    </Button>
-                  </div>
-                  <div className="mt-4 text-center text-sm">
-                    Save your result?{" "}
-                    <Link href="/signup" className="underline">
-                      Sign up
-                    </Link>
-                  </div>
-                </CardContent>
-              </AccordionContent>
-            </Card>
-          </AccordionItem>
-        </Accordion>
-      </Draggable>
-      <Draggable defaultClassName="cursor-move" bounds="parent">
-        <div className="p-4">
-          <Category
-            category="Anime"
-            favorites={[
-              "test",
-              "test",
-              "test",
-              "test",
-              "test",
-              "test",
-              "test",
-              "test",
-              "test",
-            ]}
-          />
-        </div>
-      </Draggable>
-    </main>
+    <QueryClientProvider>
+      <main className="bg-secondary-900 h-[100vh] w-[100vw] flex items-center justify-center m-0 p-0 ">
+        <Draggable defaultClassName="cursor-move">
+          <Accordion type="single" collapsible defaultValue="upload">
+            <AccordionItem value="upload" className="border-b-0">
+              <Card className="max-w-lg bg-secondary-200 border-0 drop-shadow-lg">
+                <CardHeader>
+                  <AccordionTrigger className="AccordionTrigger flex">
+                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
+                    <CardTitle className="text-xl text-left w-full ml-2">
+                      Try it
+                    </CardTitle>
+                  </AccordionTrigger>
+                  <CardDescription className="text-slate-700">
+                    Export your bookmarks and drop it here
+                  </CardDescription>
+                </CardHeader>
+                <AccordionContent className="CollapsibleContent">
+                  <CardContent>
+                    <div className="grid gap-4">
+                      <FileUploader
+                        value={files}
+                        onValueChange={setFiles}
+                        dropzoneOptions={dropZoneConfig}
+                      >
+                        <FileInput>
+                          <div className="flex items-center justify-center h-32 w-full border bg-background rounded-md">
+                            <p className="text-gray-400">Drop file here</p>
+                          </div>
+                        </FileInput>
+                      </FileUploader>
+                      <Button
+                        type="submit"
+                        className="w-full bg-secondary-700 text-white"
+                      >
+                        Organize it
+                      </Button>
+                    </div>
+                    <UserProfile />
+                    {/* <div className="mt-4 text-center text-sm">
+                      Save your result?{" "}
+                      <Link href="/signup" className="underline">
+                        Sign up
+                      </Link>
+                    </div> */}
+                  </CardContent>
+                </AccordionContent>
+              </Card>
+            </AccordionItem>
+          </Accordion>
+        </Draggable>
+        <MyBentoGrid
+          bookmarks={bookmarks}
+          items={[]}
+          classNames={{
+            container: "w-full h-full",
+            elementContainer: "bg-transparent w-full",
+          }}
+        />
+      </main>
+    </QueryClientProvider>
   );
 }
-async function parseFile(
-  file: File
-): Promise<Array<{ href: string; icon: string | null }>> {
-  const arr: Array<string> = [];
-  // captures href and icon(optional) value between anchor tags
-  const pattern = /<a\s+[^>]*href="([^"]*)"(?:[^>]*icon="([^"]*)")?[^>]*/gi;
+async function parseFile(file: File): Promise<CategoryItem> {
+  // captures href and icon(optional) value and text between anchor tags
+  const pattern =
+    /<a\s+[^>]*href="([^"]*)"(?:[^>]*icon="([^"]*)")?[^>]*>(.*?)<\/a>/gi;
   console.log(await file.text());
   const urls = await file
     .text()
     .then((text) => text.matchAll(pattern).toArray());
   const res = urls.map((e) => ({
-    href: e[1],
+    url: e[1],
     icon: e[2] || null,
+    name: e[3],
   }));
+  res.forEach((e) =>
+    e.icon !== null ? localStorage.setItem(e.url, e.icon) : null
+  );
   return res;
+}
+
+function makeDict(res: CategoryType) {
+  const dict: CategoryType = {};
+  console.log(res);
+  for (const label of Object.keys(res)) {
+    for (const item of res[label]) {
+      const icon = localStorage.getItem(item.url);
+      if (dict.hasOwnProperty(label)) {
+        dict[label].push({ ...item, icon });
+      } else {
+        dict[label] = [{ ...item, icon }];
+      }
+    }
+  }
+  console.log(dict);
+  return dict;
 }
