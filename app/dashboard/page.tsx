@@ -229,13 +229,11 @@ async function parseFile(file: File): Promise<CategoryItem> {
   const urls = await file
     .text()
     .then((text) => Array.from(text.matchAll(pattern)));
-  const res = urls
-    .map((e) => ({
-      url: e[1],
-      icon: e[2] || null,
-      name: e[3],
-    }))
-    .toArray();
+  const res = urls.map((e) => ({
+    url: e[1],
+    icon: e[2] || null,
+    name: e[3],
+  }));
   res.forEach((e) =>
     e.icon !== null ? localStorage.setItem(e.url, e.icon) : null
   );
