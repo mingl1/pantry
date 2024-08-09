@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ModeToggle } from "@/components/ThemeToggle";
+import { Analytics } from "@vercel/analytics/react";
 <Toaster />;
 const displayFont = Syne({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
             <ModeToggle />
           </div>
           {children}
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
