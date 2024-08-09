@@ -108,8 +108,8 @@ export default function Command({
         <CommandEmpty>Create new category: {curr}</CommandEmpty>
         <CommandGroup heading="Suggestions">
           {labels &&
-            labels.map((label) => (
-              <CommandItem>
+            labels.map((label, index) => (
+              <CommandItem key={label + index}>
                 <User className="mr-2 h-4 w-4" />
                 <span className="text-black">
                   {label
