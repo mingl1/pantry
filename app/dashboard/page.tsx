@@ -42,6 +42,7 @@ export type CategoryItem = {
 // const containerClassName =
 //   "w-full h-screen flex items-center justify-center px-4";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { MdWarning } from "react-icons/md";
 
 export default function Dashboard() {
   const [bookmarks, setBookmarks] = useState<CategoryType>({});
@@ -115,19 +116,22 @@ export default function Dashboard() {
   }, [reload]);
   return (
     <QueryClientProvider>
-      <main className="bg-secondary-900 h-[100vh] w-[100vw] flex items-center justify-center m-0 p-0 overflow-hidden ">
+      <main className="bg-secondary-100/20 dark:bg-secondary-900/10 h-[100vh] w-[100vw] flex items-center justify-center m-0 p-0 overflow-hidden ">
         <Draggable defaultClassName="cursor-move ">
           <Accordion type="single" collapsible defaultValue="upload">
             <AccordionItem value="upload" className="border-b-0">
-              <Card className="max-w-lg bg-secondary-200 border-0 drop-shadow-lg">
-                <CardHeader>
-                  <AccordionTrigger className="AccordionTrigger flex">
-                    <ChevronDownIcon className="AccordionChevron" aria-hidden />
-                    <CardTitle className="text-xl text-left w-full ml-2">
+              <Card className="max-w-lg bg-secondary-200 dark:bg-background border-0 drop-shadow-lg">
+                <CardHeader className="hover:no-underline">
+                  <AccordionTrigger className="AccordionTrigger flex hover:no-underline">
+                    <ChevronDownIcon
+                      className="AccordionChevron text-primary-900"
+                      aria-hidden
+                    />
+                    <CardTitle className="text-xl text-left w-full ml-2 dark:text-primary-600 hover:no-underline">
                       Try it
                     </CardTitle>
                   </AccordionTrigger>
-                  <CardDescription className="text-slate-700">
+                  <CardDescription className="dark:text-primary-900">
                     Export your bookmarks and drop it here
                   </CardDescription>
                 </CardHeader>
@@ -159,22 +163,31 @@ export default function Dashboard() {
                         </FileUploader>
 
                         {bookmarks && Object.keys(bookmarks).length > 0 && (
-                          <Button
-                            className="w-full bg-secondary-700 text-white"
-                            onClick={async () => {
-                              let chunkResponse = await fetch(
-                                "/auth/bookmarks",
-                                {
-                                  method: "POST",
-                                  body: JSON.stringify({ purge: true }),
-                                }
-                              )
-                                .then((res) => setReload((e) => !e))
-                                .catch((res) => res);
-                            }}
-                          >
-                            Something went wrong...Purge it!
-                          </Button>
+                          <>
+                            <Button
+                              className="w-full bg-secondary-700 text-rose-800 dark:bg-primary-100/5 dark:text-rose-400"
+                              onClick={async () => {
+                                let chunkResponse = await fetch(
+                                  "/auth/bookmarks",
+                                  {
+                                    method: "POST",
+                                    body: JSON.stringify({ purge: true }),
+                                  }
+                                )
+                                  .then((res) => setReload((e) => !e))
+                                  .catch((res) => res);
+                              }}
+                            >
+                              Something went wrong...Purge it!
+                            </Button>
+                            <Alert>
+                              <MdWarning className="h-4 w-4 text-rose-300" />
+                              {/* <AlertTitle>Heads up!</AlertTitle> */}
+                              <AlertDescription className="dark:text-rose-200 text-rose-700 ">
+                                Your bookmarks will be deleted if purged.
+                              </AlertDescription>
+                            </Alert>
+                          </>
                         )}
                       </div>
                     )}

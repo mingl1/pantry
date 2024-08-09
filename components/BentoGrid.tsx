@@ -12,6 +12,8 @@ import {
   NotDraggingStyle,
 } from "react-beautiful-dnd";
 import { DragEvent } from "react";
+import { useTheme } from "next-themes";
+
 const totalSlots = 4 * 3;
 const move = (
   source: CategoryItem,
@@ -42,19 +44,43 @@ const grid = 8;
 
 const getItemStyle = (
   isDragging: boolean,
-  draggableStyle: CSSProperties | undefined
-): CSSProperties => ({
-  userSelect: "none" as "none", // Explicitly type the value
-  padding: 16,
-  margin: `0 0 8px 0`,
-  background: isDragging ? "lightgreen" : "grey",
-  ...draggableStyle,
-});
+  draggableStyle: CSSProperties | undefined,
+  dark: string | undefined
+): CSSProperties =>
+  isDragging
+    ? {
+        userSelect: "none" as "none", // Explicitly type the value
+        padding: 16,
+        margin: `0 0 8px 0`,
+        background: `${dark === "dark" ? "DarkSlateBlue" : "DarkGoldenRod"}`,
+        ...draggableStyle,
+      }
+    : {
+        userSelect: "none" as "none", // Explicitly type the value
+        padding: 16,
+        margin: `0 0 8px 0`,
+        ...draggableStyle,
+      };
 
-const getListStyle = (isDraggingOver: boolean): CSSProperties => ({
-  background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: 8,
-});
+const getListStyle = (
+  isDraggingOver: boolean,
+  dark: string | undefined
+): CSSProperties =>
+  isDraggingOver
+    ? {
+        background: `${dark === "dark" ? "MediumSlateBlue" : "BurlyWood"}`,
+        scrollbarColor: `${
+          dark === "dark" ? "MediumSlateBlue" : "BurlyWood"
+        } transparent`,
+
+        padding: 8,
+      }
+    : {
+        padding: 8,
+        scrollbarColor: `${
+          dark === "dark" ? "MediumSlateBlue" : "BurlyWood"
+        } transparent`,
+      };
 // const MyBentoGrid = ({
 //   categories,
 //   initial,
@@ -102,6 +128,8 @@ export const BentoGrid = ({
   setLabels: React.Dispatch<React.SetStateAction<string[]>>;
   // initial: React.JSX.Element;
 }): React.ReactNode => {
+  const { theme } = useTheme();
+
   useEffect(() => {
     if (bookmarks) {
       const categories = { ...bookmarks };
@@ -168,7 +196,7 @@ export const BentoGrid = ({
     <DragDropContext onDragEnd={onDragEnd}>
       <div
         className={cn(
-          `grid gap-6 p-4 
+          `grid gap-6 p-4 bg-transparent
         ${classNames?.container ?? ""}`
         )}
         style={{
@@ -181,12 +209,10 @@ export const BentoGrid = ({
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
-                style={getListStyle(snapshot.isDraggingOver)}
+                style={getListStyle(snapshot.isDraggingOver, theme)}
                 {...provided.droppableProps}
                 className={cn(
-                  ` bento-card bg-white p-4 rounded-2xl overflow-y-auto text-wrap overflow-x-hidden ${
-                    classNames?.elementContainer ?? ""
-                  }`
+                  `  dark:bg-background p-4 rounded-2xl overflow-y-auto text-wrap  overflow-x-hidden bg-secondary-900 text-slate-950 dark:text-primary-200/95`
                 )}
               >
                 <h1 className="break-words">
@@ -213,8 +239,10 @@ export const BentoGrid = ({
                           {...provided.dragHandleProps}
                           style={getItemStyle(
                             snapshot.isDragging,
-                            provided.draggableProps.style
+                            provided.draggableProps.style,
+                            theme
                           )}
+                          className="bg-secondary-400 dark:bg-muted"
                         >
                           <div
                             style={{
@@ -250,6 +278,7 @@ export const BentoGrid = ({
                                   newState.filter((group) => group.length)
                                 );
                               }}
+                              className="bg-muted-foreground w-fit mx-auto mt-4 text-rose-300 p-1 rounded-md"
                             >
                               delete
                             </button>

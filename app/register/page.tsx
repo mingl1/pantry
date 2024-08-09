@@ -58,7 +58,6 @@ export default function LoginForm() {
                 Enter your email below to create your account
               </p>
             </div>
-            {/* <UserAuthForm /> */}
             <SignUp redirectTo={next || "/dashboard"} />
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
