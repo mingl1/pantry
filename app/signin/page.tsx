@@ -1,4 +1,4 @@
-import SignIn, { SignInForm } from "@/components/supaauth/signin";
+import { SignInForm } from "@/components/supaauth/signin";
 import Social from "@/components/supaauth/social";
 import {
   Card,

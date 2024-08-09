@@ -34,13 +34,13 @@ export type CategoryItem = {
   icon?: string | null;
   name?: string | null;
 }[];
-export const description =
-  "A sign up form with first name, last name, email and password inside a card. There's an option to sign up with GitHub and a link to login if you already have an account";
+// const description =
+//   "A sign up form with first name, last name, email and password inside a card. There's an option to sign up with GitHub and a link to login if you already have an account";
 
-export const iframeHeight = "600px";
+// const iframeHeight = "600px";
 
-export const containerClassName =
-  "w-full h-screen flex items-center justify-center px-4";
+// const containerClassName =
+//   "w-full h-screen flex items-center justify-center px-4";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Dashboard() {
