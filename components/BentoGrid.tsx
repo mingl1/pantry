@@ -253,7 +253,8 @@ export const BentoGrid = ({
                           >
                             <div className="flex align-center justify-center text-wrap w-full">
                               {item.icon && (
-                                <Image
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
                                   src={item.icon}
                                   alt={`Icon image for ${item.name}`}
                                   width={32}
