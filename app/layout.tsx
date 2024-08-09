@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ModeToggle } from "@/components/ThemeToggle";
 <Toaster />;
 const displayFont = Syne({
   subsets: ["latin"],
@@ -29,7 +31,17 @@ export default function RootLayout({
       <body
         className={`${baseFont.variable} ${displayFont.variable} scroll-smooth bg-transparent`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="w-8 h-8 absolute right-4 top-4">
+            <ModeToggle />
+          </div>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

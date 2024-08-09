@@ -32,31 +32,47 @@ export default function Component() {
           </h2>
         </>
       }
-      description="All your bookmarks in one place. Import your existing bookmarks from any browser. We will remove the duplicates for you!"
+      description="All your bookmarks in one place. Import your existing bookmarks from any browser. We will remove the duplicates for you (soon)!"
       className="pt-16 px-10 sm:px-12 xl:px-32"
       withBackground
     >
       <LandingShowcaseItem className="bg-secondary-100">
-        <ChromeIcon className="w-11 h-11" />
+        <ChromeIcon className="w-11 h-11 " />
       </LandingShowcaseItem>
 
       <LandingShowcaseItem className="bg-secondary-100">
-        <CompassIcon className="w-11 h-11" />
+        <CompassIcon className="w-11 h-11 " />
       </LandingShowcaseItem>
 
       <LandingShowcaseItem className="bg-secondary-100">
-        <Image className="w-11 h-11" alt="Arc browser icon" src={Firefox} />
+        <Image
+          className="w-11 h-11 dark:invert"
+          alt="Arc browser icon for icons at pagemark.co"
+          src={Firefox}
+        />
       </LandingShowcaseItem>
       <LandingShowcaseItem className="bg-secondary-100">
-        <Image className="w-11 h-11" alt="Arc browser icon" src={OldEdge} />
+        <Image
+          className="w-11 h-11 dark:invert"
+          alt="Arc browser icon for icons at pagemark.co"
+          src={OldEdge}
+        />
       </LandingShowcaseItem>
 
       <LandingShowcaseItem className="bg-secondary-100">
-        <Image className="w-11 h-11" alt="Arc browser icon" src={Edge} />
+        <Image
+          className="w-11 h-11 dark:invert"
+          alt="Arc browser icon for icons at pagemark.co"
+          src={Edge}
+        />
       </LandingShowcaseItem>
 
       <LandingShowcaseItem className="bg-secondary-100">
-        <Image className="w-11 h-11" alt="Arc browser icon" src={Arc} />
+        <Image
+          className="w-11 h-11 dark:invert"
+          alt="Arc browser icon for icons at pagemark.co"
+          src={Arc}
+        />
       </LandingShowcaseItem>
     </LandingShowcase>
   );

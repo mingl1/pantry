@@ -29,6 +29,7 @@ export default function UserProfile() {
     });
   };
 
+  console.log(data);
   return (
     <div className="w-full">
       <Popover>

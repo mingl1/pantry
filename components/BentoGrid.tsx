@@ -11,10 +11,11 @@ import {
   DraggingStyle,
   NotDraggingStyle,
 } from "react-beautiful-dnd";
+import { DragEvent } from "react";
 const totalSlots = 4 * 3;
 const move = (
-  source: Iterable<unknown> | ArrayLike<unknown>,
-  destination: Iterable<unknown> | ArrayLike<unknown>,
+  source: CategoryItem,
+  destination: CategoryItem,
   droppableSource: { index: number; droppableId: string | number },
   droppableDestination: { index: number; droppableId: string | number }
 ) => {
@@ -24,17 +25,13 @@ const move = (
 
   destClone.splice(droppableDestination.index, 0, removed);
 
-  const result = {};
+  const result: { [id: string | number]: CategoryItem } = {};
   result[droppableSource.droppableId] = sourceClone;
   result[droppableDestination.droppableId] = destClone;
 
   return result;
 };
-const reorder = (
-  list: Iterable<unknown> | ArrayLike<unknown>,
-  startIndex: number,
-  endIndex: number
-) => {
+const reorder = (list: CategoryItem, startIndex: number, endIndex: number) => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
@@ -93,15 +90,20 @@ export const BentoGrid = ({
   gridCols = 4,
   rowHeight = 250,
   classNames,
+  state,
+  setState,
+  labels,
+  setLabels,
 }: BentoGridProps & {
   bookmarks: CategoryType | undefined;
+  state: CategoryItem[];
+  setState: React.Dispatch<React.SetStateAction<CategoryItem[]>>;
+  labels: string[];
+  setLabels: React.Dispatch<React.SetStateAction<string[]>>;
   // initial: React.JSX.Element;
 }): React.ReactNode => {
-  const items: BentoItems = [
-    // { id: 30, width: 2, height: 2, element: initial, title: "Submit" },
-  ];
-  const [state, setState] = useState<CategoryItem[]>([]);
   useEffect(() => {
+    console.log("bookmark changing");
     if (bookmarks) {
       const categories = { ...bookmarks };
       let totalURLS = 0;
@@ -113,27 +115,18 @@ export const BentoGrid = ({
         const num_urls = categories[label].length;
         const { width, height } = computeBento(num_urls, totalURLS);
         tempState.push(categories[label]);
-        // items.push({
-        //   id: index,
-        //   title: label,
-        //   element: (
-        //     <Category
-        //       category={label.split("/").pop()!}
-        //       // favorites={categories[label]}
-        //       favorites={state}
-        //       ind={index}
-        //     />
-        //   ),
-        //   width,
-        //   height,
-        // });
       });
       setState(tempState);
+      setLabels(Object.keys(categories));
     }
   }, [bookmarks]);
 
-  function onDragEnd(result: { source: any; destination: any }) {
+  function onDragEnd(result: {
+    source: { droppableId: number; index: number };
+    destination: { droppableId: number; index: number };
+  }) {
     const { source, destination } = result;
+    console.log(result);
 
     // dropped outside the list
     if (!destination) {
@@ -143,7 +136,11 @@ export const BentoGrid = ({
     const dInd = +destination.droppableId;
 
     if (sInd === dInd) {
-      const items = reorder(state[sInd], source.index, destination.index);
+      const items: CategoryItem = reorder(
+        state[sInd],
+        source.index,
+        destination.index
+      );
       const newState = [...state];
       newState[sInd] = items;
       setState(newState);
@@ -153,9 +150,23 @@ export const BentoGrid = ({
       newState[sInd] = result[sInd];
       newState[dInd] = result[dInd];
 
-      setState(newState.filter((group) => group.length));
+      setState(
+        newState.filter((group, index) => {
+          if (group.length) {
+            return true;
+          } else {
+            setLabels((labels) => [
+              ...labels.slice(0, index),
+              ...labels.slice(index + 1),
+            ]);
+            return false;
+          }
+        })
+      );
     }
   }
+  console.log(labels);
+  console.log(state);
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div
@@ -165,71 +176,90 @@ export const BentoGrid = ({
         )}
         style={{
           gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))`,
-          gridAutoRows: `${rowHeight}px`,
+          gridAutoRows: `20%`,
         }}
       >
         {state.map((el: CategoryItem, ind) => (
-          <Droppable key={ind} droppableId={`${ind}`}>
+          <Droppable droppableId={`${ind}`}>
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 style={getListStyle(snapshot.isDraggingOver)}
                 {...provided.droppableProps}
                 className={cn(
-                  ` bento-card bg-white p-4 rounded-2xl overflow-hidden w-full ${
+                  ` bento-card bg-white p-4 rounded-2xl overflow-y-auto text-wrap overflow-x-hidden ${
                     classNames?.elementContainer ?? ""
                   }`
                 )}
               >
+                <h1 className="break-words">
+                  {labels[ind].replace("/", "\n").trim()}
+                </h1>
                 {el.map((item, index) => (
                   <Draggable
                     key={item.url}
                     draggableId={item.url}
                     index={index}
                   >
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        style={getItemStyle(
-                          snapshot.isDragging,
-                          provided.draggableProps.style
-                        )}
-                      >
+                    {(provided, snapshot) => {
+                      if (provided.dragHandleProps) {
+                        provided.dragHandleProps.onDragStart = (
+                          eve: DragEvent
+                        ) => {
+                          eve.stopPropagation();
+                        };
+                      }
+                      return (
                         <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={getItemStyle(
+                            snapshot.isDragging,
+                            provided.draggableProps.style
+                          )}
                         >
-                          <div className="flex align-center justify-center">
-                            {item.icon && (
-                              <Image
-                                src={item.icon}
-                                alt={`Icon image for ${item.name}`}
-                                width={16}
-                                height={16}
-                                className="w-4 h-4"
-                              />
-                            )}
-                            <a href={item.url}>{item.name}</a>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newState = [...state];
-                              newState[ind].splice(index, 1);
-                              setState(
-                                newState.filter((group) => group.length)
-                              );
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
+                            className="flex-col"
                           >
-                            delete
-                          </button>
+                            <div className="flex align-center justify-center text-wrap w-full">
+                              {item.icon && (
+                                <Image
+                                  src={item.icon}
+                                  alt={`Icon image for ${item.name}`}
+                                  width={16}
+                                  height={16}
+                                  className="w-4 h-4"
+                                />
+                              )}
+                              <a
+                                href={item.url}
+                                target="_blank"
+                                className="text-wrap break-words"
+                              >
+                                {item.name}
+                              </a>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newState = [...state];
+                                newState[ind].splice(index, 1);
+                                setState(
+                                  newState.filter((group) => group.length)
+                                );
+                              }}
+                            >
+                              delete
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+                    }}
                   </Draggable>
                 ))}
                 {provided.placeholder}

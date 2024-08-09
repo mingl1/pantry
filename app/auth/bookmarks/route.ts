@@ -1,8 +1,8 @@
-import { type EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { CategoryItem, CategoryType } from "@/app/dashboard/page";
+import { revalidateTag } from "next/cache";
 export async function GET(request: NextRequest) {
   const supabase = createSupabaseServer();
   // let { data, error } = await supabase.auth.getUser();
@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     .schema("public")
     .from("users")
     .select("bookmarks");
+  console.log(data);
   if (error || data === null) {
     return NextResponse.json(null);
   }
@@ -46,13 +47,12 @@ export async function POST(request: Request) {
   const dict: {
     [label: string]: CategoryItem;
   } = {};
-  if (body) {
-    const supabase = createSupabaseServer();
-    let { data, error } = await supabase.auth.getUser();
-    if (error) {
-      redirect("/");
-    }
-
+  const supabase = createSupabaseServer();
+  let { data, error } = await supabase.auth.getUser();
+  if (error) {
+    redirect("/");
+  }
+  if (body && !body.purge) {
     const itemArray = body as CategoryItem;
     const requestOptions = {
       method: "POST",
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
         features: {
           categories: {
             limit: 1,
-            // model: process.env.model,
+            model: process.env.model,
             // explanation: true,
             limit_text_characters: 9000,
           },
@@ -109,6 +109,19 @@ export async function POST(request: Request) {
 
     if (res.error) {
       return Response.json({ error });
+    }
+    revalidateTag("bookmarks");
+  } else if (body && body.purge) {
+    let res = await supabase
+      .from("users")
+      .update({ bookmarks: {} })
+      .eq("id", data.user?.id);
+    console.log(res);
+    if (res.status !== 200 && res.status !== 204) {
+      return Response.json(false);
+    } else {
+      revalidateTag("bookmarks");
+      return Response.json(true);
     }
   }
 

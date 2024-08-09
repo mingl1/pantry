@@ -1,42 +1,41 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { IoLogoGithub } from "react-icons/io5";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
+import { Icons } from "../ui/icons";
 
 export default function Social({ redirectTo }: { redirectTo: string }) {
-	const loginWithProvider = async (provider: "github" | "google") => {
-		const supbase = createSupabaseBrowser();
-		await supbase.auth.signInWithOAuth({
-			provider,
-			options: {
-				redirectTo:
-					window.location.origin +
-					`/auth/callback?next=` +
-					redirectTo,
-			},
-		});
-	};
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-	return (
-		<div className="w-full flex gap-2">
-			<Button
-				className="w-full h-8 flex items-center gap-5"
-				variant="outline"
-				onClick={() => loginWithProvider("github")}
-			>
-				<IoLogoGithub />
-				Github
-			</Button>
-			<Button
-				className="w-full h-8 flex items-center gap-2"
-				variant="outline"
-				onClick={() => loginWithProvider("google")}
-			>
-				<FcGoogle />
-				Google
-			</Button>
-		</div>
-	);
+  const loginWithProvider = async (provider: "github" | "google") => {
+    const supbase = createSupabaseBrowser();
+    await supbase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo:
+          window.location.origin + `/auth/callback?next=` + redirectTo,
+      },
+    });
+  };
+
+  return (
+    <Button
+      variant="outline"
+      type="button"
+      disabled={isLoading}
+      onClick={() => {
+        setIsLoading(true);
+        loginWithProvider("google");
+      }}
+    >
+      {isLoading ? (
+        <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        <Icons.google className="mr-2 h-4 w-4" />
+      )}{" "}
+      Google
+    </Button>
+  );
 }

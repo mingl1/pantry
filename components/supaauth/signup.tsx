@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { verifyOtp } from "@/actions/auth";
 import { toast } from "sonner";
 import { usePathname, useRouter } from "next/navigation";
+import { Icons } from "../ui/icons";
 
 const FormSchema = z
   .object({
@@ -127,7 +128,7 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
 
   return (
     <div
-      className={` whitespace-nowrap p-5 space-x-5 overflow-hidden  items-center align-top   ${
+      className={` whitespace-nowrap p-5 space-x-5 overflow-hidden  items-center align-top  pb-0 ${
         isPending ? "animate-pulse" : ""
       }`}
     >
@@ -223,7 +224,7 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
               </FormItem>
             )}
           />
-          <Button
+          {/* <Button
             type="submit"
             className="w-full h-8 bg-indigo-500 hover:bg-indigo-600 transition-all text-white flex items-center gap-2"
           >
@@ -232,8 +233,18 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
             />
             Continue
             <RiArrowRightSFill className=" size-4" />
+          </Button> */}
+          <Button
+            disabled={isPending}
+            type="submit"
+            className="bg-secondary-700 text-white dark:bg-primary-700 w-full"
+          >
+            {isPending && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Continue
           </Button>
-          <div className="mt-4 text-center text-sm">
+          {/* <div className="mt-4 text-center text-sm">
             Already have an account?{" "}
             <Link
               href={redirectTo ? `/signin?next=` + redirectTo : "/signin"}
@@ -241,13 +252,13 @@ export default function SignUp({ redirectTo }: { redirectTo: string }) {
             >
               Sign in
             </Link>
-          </div>
+          </div> */}
         </form>
       </Form>
       {/* verify email */}
       <div
         className={cn(
-          `w-full inline-block h-80 text-wrap align-top  transform transition-all space-y-3`,
+          `w-full inline-block h-full text-wrap align-top  transform transition-all space-y-3`,
           isConfirmed ? "-translate-x-[105%]" : "translate-x-0"
         )}
       >
