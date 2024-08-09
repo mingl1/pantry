@@ -11,6 +11,8 @@ export default function Social({ redirectTo }: { redirectTo: string }) {
 
   const loginWithProvider = async (provider: "github" | "google") => {
     const supbase = createSupabaseBrowser();
+    console.log(window.location.origin);
+    console.log("redirectTO:" + redirectTo);
     await supbase.auth.signInWithOAuth({
       provider,
       options: {

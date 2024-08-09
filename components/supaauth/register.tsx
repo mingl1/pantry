@@ -12,6 +12,7 @@ export default function Register() {
 
   // Get the value of the 'next' parameter
   const next = urlParams.get("next");
+  console.log("next: " + next);
   const verify = urlParams.get("verify");
 
   return (
