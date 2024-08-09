@@ -81,7 +81,7 @@ export default function Dashboard() {
               body: JSON.stringify(chunk),
             })
               .then((res) => (res ? res.json() : null))
-              .catch((res) => res);
+              .catch((res) => null);
             if (chunkResponse === null || chunkResponse.error) {
               setIsFetching(false);
               return;
@@ -110,7 +110,6 @@ export default function Dashboard() {
         .then((res) => makeDict(res))
         .catch((err) => null);
       if (response) setBookmarks(response);
-      console.log(response);
     }
     getBookMarks();
   }, [reload]);
@@ -172,7 +171,6 @@ export default function Dashboard() {
                               )
                                 .then((res) => setReload((e) => !e))
                                 .catch((res) => res);
-                              console.log(chunkResponse);
                             }}
                           >
                             Something went wrong...Purge it!
@@ -225,7 +223,6 @@ async function parseFile(file: File): Promise<CategoryItem> {
   // captures href and icon(optional) value and text between anchor tags
   const pattern =
     /<a\s+[^>]*href="([^"]*)"(?:[^>]*icon="([^"]*)")?[^>]*>(.*?)<\/a>/gi;
-  console.log(await file.text());
   const urls = await file
     .text()
     .then((text) => Array.from(text.matchAll(pattern)));

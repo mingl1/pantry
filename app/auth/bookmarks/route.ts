@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
     .schema("public")
     .from("users")
     .select("bookmarks");
-  console.log(data);
   if (error || data === null) {
     return NextResponse.json(null);
   }
@@ -79,7 +78,6 @@ export async function POST(request: Request) {
       )
         .then((response) => response.json())
         .then((result: ApiResponse) => {
-          console.log(result);
           if (isSuccessResponse(result)) resultArray.push(result);
           else resultArray.push(null);
         })
@@ -116,7 +114,6 @@ export async function POST(request: Request) {
       .from("users")
       .update({ bookmarks: {} })
       .eq("id", data.user?.id);
-    console.log(res);
     if (res.status !== 200 && res.status !== 204) {
       return Response.json(false);
     } else {

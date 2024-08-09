@@ -103,7 +103,6 @@ export const BentoGrid = ({
   // initial: React.JSX.Element;
 }): React.ReactNode => {
   useEffect(() => {
-    console.log("bookmark changing");
     if (bookmarks) {
       const categories = { ...bookmarks };
       let totalURLS = 0;
@@ -126,7 +125,6 @@ export const BentoGrid = ({
     destination: { droppableId: number; index: number };
   }) {
     const { source, destination } = result;
-    console.log(result);
 
     // dropped outside the list
     if (!destination) {

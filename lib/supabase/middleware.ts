@@ -60,20 +60,15 @@ export async function updateSession(request: NextRequest) {
   const next = url.searchParams.get("next");
   if (user.data.user?.id) {
     if (authPaths.includes(url.pathname)) {
-      console.log("123");
-
       return NextResponse.redirect(new URL("/", request.url));
     }
     return response;
   } else {
     if (protectedPaths.includes(url.pathname)) {
-      console.log("321");
-
       return NextResponse.redirect(
         new URL("/signin?next=" + (next || url.pathname), request.url)
       );
     }
-    console.log("1234");
     return response;
   }
 }
