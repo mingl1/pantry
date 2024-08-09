@@ -226,7 +226,9 @@ async function parseFile(file: File): Promise<CategoryItem> {
   const pattern =
     /<a\s+[^>]*href="([^"]*)"(?:[^>]*icon="([^"]*)")?[^>]*>(.*?)<\/a>/gi;
   console.log(await file.text());
-  const urls = await file.text().then((text) => text.matchAll(pattern));
+  const urls = await file
+    .text()
+    .then((text) => Array.from(text.matchAll(pattern)));
   const res = urls
     .map((e) => ({
       url: e[1],
