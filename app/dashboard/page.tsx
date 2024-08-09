@@ -226,14 +226,14 @@ async function parseFile(file: File): Promise<CategoryItem> {
   const pattern =
     /<a\s+[^>]*href="([^"]*)"(?:[^>]*icon="([^"]*)")?[^>]*>(.*?)<\/a>/gi;
   console.log(await file.text());
-  const urls = await file
-    .text()
-    .then((text) => text.matchAll(pattern).toArray());
-  const res = urls.map((e) => ({
-    url: e[1],
-    icon: e[2] || null,
-    name: e[3],
-  }));
+  const urls = await file.text().then((text) => text.matchAll(pattern));
+  const res = urls
+    .map((e) => ({
+      url: e[1],
+      icon: e[2] || null,
+      name: e[3],
+    }))
+    .toArray();
   res.forEach((e) =>
     e.icon !== null ? localStorage.setItem(e.url, e.icon) : null
   );
