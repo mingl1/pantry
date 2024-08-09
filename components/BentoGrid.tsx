@@ -165,9 +165,8 @@ export const BentoGrid = ({
       );
     }
   }
-  console.log(labels);
-  console.log(state);
   return (
+    // @ts-expect-error
     <DragDropContext onDragEnd={onDragEnd}>
       <div
         className={cn(
@@ -180,7 +179,7 @@ export const BentoGrid = ({
         }}
       >
         {state.map((el: CategoryItem, ind) => (
-          <Droppable droppableId={`${ind}`}>
+          <Droppable droppableId={`${ind}`} key={ind}>
             {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
