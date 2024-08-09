@@ -2,7 +2,6 @@ import { LandingProductFeature } from "@/components/landing/LandingProductFeatur
 import { LandingProductVideoFeature } from "@/components/landing/LandingProductVideoFeature";
 import clsx from "clsx";
 import { Children, ReactElement, cloneElement } from "react";
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 type Child = ReactElement<any, any>;
 
 /**
