@@ -15,7 +15,7 @@ export default function Social({ redirectTo }: { redirectTo: string }) {
       provider,
       options: {
         redirectTo:
-          window.location.origin + `/auth/callback?next=` + redirectTo,
+          `https://pagemark.vercel.app/auth/callback?next=` + redirectTo,
       },
     });
   };
