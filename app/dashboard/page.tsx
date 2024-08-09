@@ -256,7 +256,10 @@ function makeDict(res: CategoryType) {
   if (res)
     for (const label of Object.keys(res)) {
       for (const item of res[label]) {
-        const icon = localStorage.getItem(item.url);
+        let icon = localStorage.getItem(item.url);
+        if (icon === null) {
+          icon = `https://www.google.com/s2/favicons?sz=32&${item.url}`;
+        }
         if (dict.hasOwnProperty(label)) {
           dict[label].push({ ...item, icon });
         } else {

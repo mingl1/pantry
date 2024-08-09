@@ -256,9 +256,9 @@ export const BentoGrid = ({
                                 <Image
                                   src={item.icon}
                                   alt={`Icon image for ${item.name}`}
-                                  width={16}
-                                  height={16}
-                                  className="w-4 h-4"
+                                  width={32}
+                                  height={32}
+                                  className="w-4 h-4 md:w-8 md:h-8"
                                 />
                               )}
                               <a
