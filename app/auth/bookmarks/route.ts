@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   }
   return NextResponse.json(data[0].bookmarks);
 }
-export type ApiResponse =
+type ApiResponse =
   | {
       usage: {
         text_units: number;
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
 
   return Response.json(dict);
 }
-export function isSuccessResponse(
+function isSuccessResponse(
   response: ApiResponse
 ): response is Exclude<ApiResponse, { error: string; code: number }> {
   return (response as { usage: any }).usage !== undefined;
