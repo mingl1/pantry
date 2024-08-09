@@ -111,7 +111,7 @@ export default function Command({
             labels.map((label, index) => (
               <CommandItem key={label + index}>
                 <User className="mr-2 h-4 w-4" />
-                <span className="text-black">
+                <span className="text-black dark:text-white">
                   {label
                     .split("/")
                     .slice(0, curr.split("/").length + 2)
