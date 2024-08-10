@@ -88,7 +88,9 @@ export default function Dashboard() {
               method: "POST",
               body: JSON.stringify(chunk),
             })
-              .then((res) => (res ? res.json() : null))
+              .then((res) =>
+                res ? (res.json() as unknown as CategoryType) : null
+              )
               .catch((res) => null);
             if (chunkResponse === null || chunkResponse.error) {
               if (i > 0) {
@@ -100,7 +102,7 @@ export default function Dashboard() {
                   chunkResponse[label].length &&
                   response.hasOwnProperty(label)
                 ) {
-                  response[label].push(chunkResponse[label]);
+                  response[label].push(...chunkResponse[label]);
                 } else {
                   response[label] = chunkResponse[label];
                 }
