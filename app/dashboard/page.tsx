@@ -61,6 +61,7 @@ export default function Dashboard() {
   const [isFetching, setIsFetching] = useState(false);
   const [progress, setProgress] = useState(0);
   const [reload, setReload] = useState(true);
+  const [asyncStuff, setAsyncStuff] = useState(false);
   useEffect(() => {
     async function asyncWork() {
       if (files && files[0]) {
@@ -154,8 +155,9 @@ export default function Dashboard() {
                           value={files}
                           onValueChange={setFiles}
                           dropzoneOptions={dropZoneConfig}
+                          
                         >
-                          <FileInput>
+                          <FileInput >
                             <div className="flex items-center justify-center h-32 w-full border bg-background rounded-md">
                               <p className="text-gray-400">Drop file here</p>
                             </div>
@@ -167,6 +169,7 @@ export default function Dashboard() {
                             <Button
                               className="w-full bg-secondary-700 text-rose-800 dark:bg-primary-100/5 dark:text-rose-400"
                               onClick={async () => {
+                                setAsyncStuff(true);
                                 let chunkResponse = await fetch(
                                   "/auth/bookmarks",
                                   {
@@ -176,7 +179,9 @@ export default function Dashboard() {
                                 )
                                   .then((res) => setReload((e) => !e))
                                   .catch((res) => res);
+                                setAsyncStuff(false);
                               }}
+                              disabled={asyncStuff}
                             >
                               Something went wrong...Purge it!
                             </Button>
@@ -187,6 +192,19 @@ export default function Dashboard() {
                                 Your bookmarks will be deleted if purged.
                               </AlertDescription>
                             </Alert>
+                            <Button
+                              className="w-full bg-secondary-700 text-rose-800 dark:bg-primary-100/5 dark:text-rose-400"
+                              onClick={async () => {
+                                setAsyncStuff(true);
+                                await saveDict(state, labels)
+                                  .then(() => setReload((e) => !e))
+                                  .catch((e) => console.log(e));
+                                setAsyncStuff(false);
+                              }}
+                              disabled={isFetching}
+                            >
+                              Save your marked page
+                            </Button>
                           </>
                         )}
                       </div>
@@ -268,4 +286,18 @@ function makeDict(res: CategoryType) {
       }
     }
   return dict;
+}
+
+async function saveDict(dict: CategoryItem[], labels: string[]) {
+  const savedDict: CategoryType = {};
+  for (let i = 0; i < labels.length; i++) {
+    savedDict[labels[i]] = dict[i];
+  }
+  let res = await fetch("/auth/bookmarks/save", {
+    method: "POST",
+    body: JSON.stringify(savedDict),
+  })
+    .then((res) => (res ? res.json() : null))
+    .catch((res) => null);
+  console.log(res);
 }

@@ -1,14 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
+import { User } from "lucide-react";
 
 import {
   CommandDialog,
@@ -17,8 +10,6 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import { CategoryItem } from "@/app/dashboard/page";
 
