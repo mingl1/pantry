@@ -100,15 +100,15 @@ export async function POST(request: Request) {
         dict["/Unavailable"].push(itemArray[i]);
       }
     }
-    const res = await supabase.rpc("add_bookmark_to_user", {
-      user_id: data.user?.id,
-      new_bookmark: dict,
-    });
+    // const res = await supabase.rpc("add_bookmark_to_user", {
+    //   user_id: data.user?.id,
+    //   new_bookmark: dict,
+    // });
 
-    if (res.error) {
-      return Response.json({ error });
-    }
-    revalidateTag("bookmarks");
+    // if (res.error) {
+    //   return Response.json({ error });
+    // }
+    // revalidateTag("bookmarks");
   } else if (body && body.purge) {
     let res = await supabase
       .from("users")

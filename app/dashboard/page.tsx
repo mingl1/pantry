@@ -90,8 +90,9 @@ export default function Dashboard() {
             }
             response = { ...response, ...chunkResponse };
           }
-
-          setBookmarks(makeDict(response));
+          const s = makeDict(response);
+          // saveDict(s);
+          setBookmarks(s);
           setIsFetching(false);
           setCanSubmit(true);
         } else {
