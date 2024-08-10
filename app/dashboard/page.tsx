@@ -75,7 +75,7 @@ export default function Dashboard() {
           setIsFetching(true);
           let limit = 20;
           let totalTries = 0;
-          let maxTotal = 30;
+          let maxTotal = limit * 2;
           for (let i = 0; i < limit; i++) {
             totalTries += 1;
             if (totalTries > maxTotal) {
@@ -83,7 +83,7 @@ export default function Dashboard() {
             }
             setProgress((i / limit) * 100);
             const chunk = [favorites[i]];
-            console.log(chunk);
+            console.log(`Processing bookmark ${i}`);
             let chunkResponse = await fetch("/auth/bookmarks", {
               method: "POST",
               body: JSON.stringify(chunk),
@@ -94,8 +94,18 @@ export default function Dashboard() {
               if (i > 0) {
                 i -= 1;
               }
+            } else {
+              for (const label of Object.keys(chunkResponse)) {
+                if (
+                  chunkResponse[label].length &&
+                  response.hasOwnProperty(label)
+                ) {
+                  response[label].push(chunkResponse[label]);
+                } else {
+                  response[label] = chunkResponse[label];
+                }
+              }
             }
-            console.log(chunkResponse);
             response = { ...response, ...chunkResponse };
           }
           const s = makeDict(response);
