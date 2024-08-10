@@ -192,7 +192,7 @@ export default function Dashboard() {
                               </AlertDescription>
                             </Alert>
                             <Button
-                              className="w-full bg-secondary-700 text-green-600 dark:bg-primary-100/5 dark:text-green-100/5"
+                              className="w-full bg-secondary-700 text-green-600 dark:bg-primary-100/5 dark:text-green-400"
                               onClick={async () => {
                                 setAsyncStuff(true);
                                 await saveDict(state, labels)
