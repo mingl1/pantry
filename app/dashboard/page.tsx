@@ -74,9 +74,9 @@ export default function Dashboard() {
           setCanSubmit(false);
           setIsFetching(true);
           let limit = 20;
-          for (let i = 0; i < limit; i += 5) {
-            setProgress(((i + 5) / limit) * 100);
-            const chunk = favorites.splice(0, 5);
+          for (let i = 0; i < limit; i++) {
+            setProgress((i / limit) * 100);
+            const chunk = [favorites[i]];
             console.log(chunk);
             let chunkResponse = await fetch("/auth/bookmarks", {
               method: "POST",
