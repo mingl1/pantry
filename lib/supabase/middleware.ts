@@ -60,7 +60,7 @@ export async function updateSession(request: NextRequest) {
   const next = url.searchParams.get("next");
   if (user.data.user?.id) {
     if (authPaths.includes(url.pathname)) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
     return response;
   } else {
