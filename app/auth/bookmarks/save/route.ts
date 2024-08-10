@@ -18,11 +18,11 @@ export async function POST(request: Request) {
     .update({ bookmarks: body })
     .eq("id", data.user?.id);
   console.log(res);
+  revalidateTag("bookmarks");
 
   if (res.status !== 200 && res.status !== 204) {
     return Response.json(false);
   } else {
-    revalidateTag("bookmarks");
     return Response.json(true);
   }
 }
