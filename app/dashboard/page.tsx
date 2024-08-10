@@ -106,7 +106,6 @@ export default function Dashboard() {
                 }
               }
             }
-            response = { ...response, ...chunkResponse };
           }
           const s = makeDict(response);
           setBookmarks(s);
@@ -164,6 +163,7 @@ export default function Dashboard() {
                           <AlertTitle>Heads up!</AlertTitle>
                           <AlertDescription>
                             Do not close the tab! Your progress will be lost!
+                            Remember to click save after processing!
                           </AlertDescription>
                         </Alert>
                       </>
