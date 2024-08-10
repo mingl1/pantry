@@ -155,9 +155,8 @@ export default function Dashboard() {
                           value={files}
                           onValueChange={setFiles}
                           dropzoneOptions={dropZoneConfig}
-                          
                         >
-                          <FileInput >
+                          <FileInput>
                             <div className="flex items-center justify-center h-32 w-full border bg-background rounded-md">
                               <p className="text-gray-400">Drop file here</p>
                             </div>
@@ -193,7 +192,7 @@ export default function Dashboard() {
                               </AlertDescription>
                             </Alert>
                             <Button
-                              className="w-full bg-secondary-700 text-rose-800 dark:bg-primary-100/5 dark:text-rose-400"
+                              className="w-full bg-secondary-700 text-green-600 dark:bg-primary-100/5 dark:text-green-100/5"
                               onClick={async () => {
                                 setAsyncStuff(true);
                                 await saveDict(state, labels)
