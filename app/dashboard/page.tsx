@@ -74,7 +74,13 @@ export default function Dashboard() {
           setCanSubmit(false);
           setIsFetching(true);
           let limit = 20;
+          let totalTries = 0;
+          let maxTotal = 30;
           for (let i = 0; i < limit; i++) {
+            totalTries += 1;
+            if (totalTries > maxTotal) {
+              break;
+            }
             setProgress((i / limit) * 100);
             const chunk = [favorites[i]];
             console.log(chunk);
@@ -85,13 +91,14 @@ export default function Dashboard() {
               .then((res) => (res ? res.json() : null))
               .catch((res) => null);
             if (chunkResponse === null || chunkResponse.error) {
-              setIsFetching(false);
-              return;
+              if (i > 0) {
+                i -= 1;
+              }
             }
+            console.log(chunkResponse);
             response = { ...response, ...chunkResponse };
           }
           const s = makeDict(response);
-          // saveDict(s);
           setBookmarks(s);
           setIsFetching(false);
           setCanSubmit(true);
