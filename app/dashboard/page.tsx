@@ -308,6 +308,8 @@ function makeDict(res: CategoryType) {
 }
 
 async function saveDict(dict: CategoryItem[], labels: string[]) {
+  console.log(dict);
+  console.log(labels);
   const savedDict: CategoryType = {};
   for (let i = 0; i < labels.length; i++) {
     savedDict[labels[i]] = dict[i];
