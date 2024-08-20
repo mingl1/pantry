@@ -2,7 +2,7 @@
 import { LandingPrimaryVideoCtaSection } from "@/components/landing/cta/LandingPrimaryCta";
 
 import { Button } from "@/components/shared/ui/button";
-
+import { useTheme } from "next-themes";
 export default function Component() {
   return (
     <LandingPrimaryVideoCtaSection
@@ -13,14 +13,23 @@ export default function Component() {
       videoPosition="center"
       videoSrc="https://cache.shipixen.com/features/11-pricing-page-builder.mp4"
       withBackground
-      variant="secondary"
+      variant={useTheme().theme == "dark" ? "primary" : "secondary"}
       // leadingComponent={<LandingProductHuntAward />}
     >
-      <Button size="xl" variant="secondary" asChild>
+      <Button
+        size="xl"
+        variant={useTheme().theme == "dark" ? "primary" : "secondary"}
+        asChild
+      >
         <a href="/register">Get started</a>
       </Button>
 
-      <Button size="xl" variant="outlineSecondary">
+      <Button
+        size="xl"
+        variant={
+          useTheme().theme == "dark" ? "outlinePrimary" : "outlineSecondary"
+        }
+      >
         <a href="/details">Learn More</a>
       </Button>
 

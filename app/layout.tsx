@@ -17,7 +17,7 @@ const baseFont = Inter({
   variable: "--font-space-default",
 });
 export const metadata: Metadata = {
-  title: "CRUDsty Pantry",
+  title: "Page Mark",
   description: "A CRUD app, for your digital pantry",
 };
 
