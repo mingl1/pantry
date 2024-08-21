@@ -9,7 +9,7 @@ export default function Component() {
   const [isMounted, setIsMounted] = useState("");
   const theme = useTheme().resolvedTheme!;
 
-  useEffect(() => setIsMounted(theme), []);
+  useEffect(() => setIsMounted(theme), [useTheme().theme]);
 
   return (
     <>
