@@ -13,7 +13,7 @@ export default function Component() {
 
   return (
     <>
-      {isMounted.length > 0 ? (
+      {isMounted && isMounted.length > 0 ? (
         <LandingPrimaryVideoCtaSection
           title="Time to organize those browser bookmarks🔖"
           description="Find whats important, with PageMark Co."
