@@ -20,7 +20,7 @@ export default function Component() {
           autoPlay={false}
           controls={false}
           videoPosition="center"
-          videoSrc="https://cache.shipixen.com/features/11-pricing-page-builder.mp4"
+          videoSrc="pagemarkco.mp4"
           withBackground
           variant={isMounted == "dark" ? "primary" : "secondary"}
           // leadingComponent={<LandingProductHuntAward />}
